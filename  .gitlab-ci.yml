@@ -1,0 +1,182 @@
+before_script:
+  - echo "CUSTOMER DOMAIN - Profile Cache"
+
+
+include:
+
+  - project: "customer/cloud-engineering/terraform/tf-customer-modules-templates" ## update to  central ops repo
+    file: "templates/terraform.yml"
+    ref: OT-8835
+ 
+ 
+#---------------------
+# global configuration
+#---------------------
+
+variables:
+  #SERVICENAME: customer
+  DD_TAGS: "business_domain:customerservice"
+  #CHANGELOG_API_ENABLE: "true"
+  CODE_PATH: "common"
+  TF_VAR_APPLICATION_NAME: "profile-cache"
+  TF_VAR_AWS_DEPLOYMENT_ROLE: "ttgsl-iam-dpcloudoperations-central-operations-cicd-role"
+  TF_VAR_PROJECT_CODE: "cust"
+  TF_VAR_SERVICE: "profile-cache"
+  TF_VAR_CUSTOMER_CLOUD_ENGINEERING_EMAIL: ${CUSTOMER_CLOUD_ENGINEERING_EMAIL}
+
+
+.dev_variables: &dev_variables
+  TF_VAR_AWS_ACCOUNT_ID: ${CUST_PROF_CACHE_DEV_AWS_ACCOUNT_ID}
+  TF_VAR_AWS_ACCOUNT_NAME: ${CUST_PROF_CACHE_DEV_AWS_ACCOUNT_NAME}
+  TF_VAR_AWS_EXTERNAL_ID: ${CUST_PROF_CACHE_DEV_AWS_EXTERNAL_ID}
+  #TF_VAR_VPC_CIDR_BLOCK: ${CUST_PROF_CACHE_DEV_AWS_VPC_CIDR_BLOCK}
+  TF_VAR_ENVIRONMENT: dev
+  WORKSPACE: $TF_VAR_ENVIRONMENT
+  TF_VAR_SUBNET_PRIV_ID_0: ${CUST_PROF_CACHE_DEV_SUBNET_PRIV_0_ID}
+  TF_VAR_SUBNET_PRIV_ID_1: ${CUST_PROF_CACHE_DEV_SUBNET_PRIV_1_ID}
+  #TF_VAR_SG_ID: ${BRAZE_DEV_SG_ID}
+  TF_VAR_VPC_ID: ${CUST_PROF_CACHE_DEV_VPC_ID}
+  TF_VAR_RT_PRIV_ID_0: ${CUST_PROF_CACHE_DEV_RT_PRIV_0_ID}
+  TF_VAR_RT_PRIV_ID_1: ${CUST_PROF_CACHE_DEV_RT_PRIV_1_ID}
+
+
+.test_variables: &test_variables
+  TF_VAR_AWS_ACCOUNT_ID: ${CUST_PROF_CACHE_TEST_AWS_ACCOUNT_ID}
+  TF_VAR_AWS_ACCOUNT_NAME: ${CUST_PROF_CACHE_TEST_AWS_ACCOUNT_NAME}
+  TF_VAR_AWS_EXTERNAL_ID: ${CUST_PROF_CACHE_TEST_AWS_EXTERNAL_ID}
+  #TF_VAR_VPC_CIDR_BLOCK: ${CUST_PROF_CACHE_DEV_AWS_VPC_CIDR_BLOCK}
+  TF_VAR_ENVIRONMENT: test
+  WORKSPACE: $TF_VAR_ENVIRONMENT
+  TF_VAR_SUBNET_PRIV_ID_0: ${CUST_PROF_CACHE_TEST_SUBNET_PRIV_0_ID}
+  TF_VAR_SUBNET_PRIV_ID_1: ${CUST_PROF_CACHE_TEST_SUBNET_PRIV_1_ID}
+  #TF_VAR_SG_ID: ${BRAZE_TEST_SG_ID}
+  TF_VAR_VPC_ID: ${CUST_PROF_CACHE_TEST_VPC_ID}
+  TF_VAR_RT_PRIV_ID_0: ${CUST_PROF_CACHE_TEST_RT_PRIV_0_ID}
+  TF_VAR_RT_PRIV_ID_1: ${CUST_PROF_CACHE_TEST_RT_PRIV_1_ID}
+
+
+.prod_variables: &prod_variables
+  TF_VAR_AWS_ACCOUNT_ID: ${CUST_PROF_CACHE_PROD_AWS_ACCOUNT_ID}
+  TF_VAR_AWS_ACCOUNT_NAME: ${CUST_PROF_CACHE_PROD_AWS_ACCOUNT_NAME}
+  TF_VAR_AWS_EXTERNAL_ID: ${CUST_PROF_CACHE_PROD_AWS_EXTERNAL_ID}
+  #TF_VAR_VPC_CIDR_BLOCK: ${CUST_PROF_CACHE_PROD_AWS_VPC_CIDR_BLOCK}
+  TF_VAR_ENVIRONMENT: prod
+  WORKSPACE: $TF_VAR_ENVIRONMENT
+  TF_VAR_SUBNET_PRIV_ID_0: ${CUST_PROF_CACHE_PROD_SUBNET_PRIV_0_ID}
+  TF_VAR_SUBNET_PRIV_ID_1: ${CUST_PROF_CACHE_PROD_SUBNET_PRIV_1_ID}
+  #TF_VAR_SG_ID: ${BRAZE_PROD_SG_ID}
+  TF_VAR_VPC_ID: ${CUST_PROF_CACHE_PROD_VPC_ID}
+  TF_VAR_RT_PRIV_ID_0: ${CUST_PROF_CACHE_PROD_RT_PRIV_0_ID}
+  TF_VAR_RT_PRIV_ID_1: ${CUST_PROF_CACHE_PROD_RT_PRIV_1_ID}
+
+
+
+####Plan in all envs at same time, deploy dev/test same time. diferent stages for pre-prod, prod.
+
+
+stages:
+  #- deployment_start_notification
+  #- test
+  - plan
+  - deploy
+  #- plan
+  #- deploy_preprod
+  #- deployment_end_notification
+
+
+##################
+# PLANNING STAGE #
+##################
+
+# PLAN TERRAFORM DEV
+tf_plan_dev:
+  extends: .plan_terraform_http
+  stage: plan
+  variables:
+    <<: *dev_variables
+
+  tags:
+    - aws-lambda
+    - docker
+  rules:
+    - if: $CI_COMMIT_BRANCH == "dev" 
+      when: manual
+
+# DEPLOY TERRAFORM DEV
+tf_deploy_dev:
+  extends: .deploy_terraform_http
+  stage: deploy
+  variables:
+    <<: *dev_variables
+
+  environment:
+    name: $CI_COMMIT_REF_NAME
+    #on_stop: tf_destroy_dev
+  tags:
+    - aws-lambda
+    - docker
+  rules:
+    - if: $CI_COMMIT_BRANCH == "dev" 
+      when: manual
+
+
+# PLAN TERRAFORM TEST
+tf_plan_test:
+  extends: .plan_terraform_http
+  stage: plan
+  variables:
+    <<: *test_variables
+  tags:
+    - aws-lambda
+    - docker
+  rules:
+    - if: $CI_COMMIT_BRANCH == "test"
+      when: manual
+
+# DEPLOY TERRAFORM TEST
+tf_deploy_test:
+  extends: .deploy_terraform_http
+  stage: deploy
+  variables:
+    <<: *test_variables
+
+  environment:
+    name: $CI_COMMIT_REF_NAME
+    #on_stop: tf_destroy_test
+  tags:
+    - aws-lambda
+    - docker
+  rules:
+    - if: $CI_COMMIT_BRANCH == "test" 
+      when: manual
+
+
+# PLAN TERRAFORM PROD
+tf_plan_prod:
+  extends: .plan_terraform_http
+  stage: plan
+  variables:
+    <<: *prod_variables
+  tags:
+    - aws-lambda
+    - docker
+  rules:
+    - if: $CI_COMMIT_BRANCH == "prod"
+      when: manual
+
+# DEPLOY TERRAFORM PROD
+tf_deploy_prod:
+  extends: .deploy_terraform_http
+  stage: deploy
+  variables:
+    <<: *prod_variables
+
+  environment:
+    name: $CI_COMMIT_REF_NAME
+    #on_stop: tf_destroy_prod
+  tags:
+    - aws-lambda
+    - docker
+  rules:
+    - if: $CI_COMMIT_BRANCH == "prod" 
+      when: manual
