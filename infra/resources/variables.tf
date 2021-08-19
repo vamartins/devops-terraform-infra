@@ -1,12 +1,3 @@
-locals {
-  # Common tags to be assigned to all resources
-  common_tags = {
-    service_name = "Curso Terraform"
-    owner        = "Vagner Almeida Martins"
-    provisioner  = "Terraform"
-  }
-}
-
 variable "region" {
   type        = string
   description = "Region where resources are going to be deployed"
@@ -82,9 +73,14 @@ variable "all_protocols" {
   description = "All Protocols"
 }
 
+variable "tui_user" {
+  type        = string
+  description = "IAM user"
+}
+
 variable "iam_ro_policy" {
   type        = string
-  description = "IAM Read-Only Policy for TUI User"
+  description = "IAM Read-Only Policy for awslab User"
 }
 
 variable "kp_aws_user" {
