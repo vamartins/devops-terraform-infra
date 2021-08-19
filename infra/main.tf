@@ -1,6 +1,6 @@
 module "main" {
   source                 = "./resources"
-  region                 = var.region
+  region                 = var.aws_region
   az                     = var.az
   vpc_cidr_block         = var.vpc_cidr_block
   subnet_public_cidr     = var.subnet_public_cidr
@@ -15,9 +15,8 @@ module "main" {
   tcp_protocol           = var.tcp_protocol
   icmp_protocol          = var.icmp_protocol
   all_protocols          = var.all_protocols
-  tui_user               = var.tui_user
   iam_ro_policy          = var.iam_ro_policy
-  kp_tui_user            = var.kp_tui_user
+  kp_tui_user            = var.kp_aws_user
   instance_type          = var.instance_type
-  ec2-user               = var.ec2-user
+  ec2-user               = var.awslab_user
 }

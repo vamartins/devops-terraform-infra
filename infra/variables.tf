@@ -7,7 +7,7 @@ locals {
   }
 }
 
-variable "region" {
+variable "aws_region" {
   type        = string
   description = "Region where resources are going to be deployed"
 }
@@ -30,11 +30,6 @@ variable "subnet_public_cidr" {
 variable "public_dest_cidr_block" {
   type        = string
   description = "CIDR for public destination"
-}
-
-variable "sg_public_ports" {
-  type        = string
-  description = "Name for Public Security Group Traffic"
 }
 
 variable "http_port" {

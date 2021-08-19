@@ -1,4 +1,4 @@
-variable "region" {
+variable "aws_region" {
   type        = string
   description = "Region where resources are going to be deployed"
 }
@@ -21,11 +21,6 @@ variable "subnet_public_cidr" {
 variable "public_dest_cidr_block" {
   type        = string
   description = "CIDR for public destination"
-}
-
-variable "sg_public_ports" {
-  type        = string
-  description = "Name for Public Security Group Traffic"
 }
 
 variable "http_port" {
@@ -71,11 +66,6 @@ variable "icmp_protocol" {
 variable "all_protocols" {
   type        = string
   description = "All Protocols"
-}
-
-variable "tui_user" {
-  type        = string
-  description = "IAM user"
 }
 
 variable "iam_ro_policy" {
