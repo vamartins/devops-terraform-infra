@@ -24,44 +24,68 @@ include:
 
 
 stages:
-  - prepare
-  - validate
-  - build
-  - deploy
+  - test
+  - deploy_mr
+  - tag_version
+  - promote_dev
+  - promote_test
+  - promote_preprod
+  - promote_prod
 
-init:
-  stage: prepare
-  script:
-    - gitlab-terraform init
-
-validate:
-  stage: validate
-  script:
-    - gitlab-terraform init
-    - gitlab-terraform validate
-
-plan:
-  stage: build
-  script:
-    - gitlab-terraform plan
-    - gitlab-terraform plan-json
-  artifacts:
-    name: plan
-    paths:
-      - ${TF_ROOT}/plan.cache
-    reports:
-      terraform: ${TF_ROOT}/plan.json
-
-# Separate apply job for manual launching Terraform as it can be destructive
-# action.
-apply:
-  stage: deploy
-  environment:
-    name: production
-  script:
-    - gitlab-terraform apply
-  dependencies:
-    - plan
-  when: manual
+tfsec:
+  extends: .tfsec
+  stage: test
   only:
-    - master
+    - merge_requests
+
+checkov:
+  extends: .checkov
+  stage: test
+  only:
+    - merge_requests
+
+tflint:
+  extends: .tflint
+  stage: test
+  only:
+    - merge_requests
+
+tf_plan:
+  extends: .tf_plan
+  variables:
+    <<: *dev_variables
+  stage: test
+  only:
+    - merge_requests
+
+deploy_mr:
+  extends: .tf_deploy
+  variables:
+    <<: *dev_variables
+  stage: deploy_mr
+  only:
+    - merge_requests
+  when: manual
+
+destroy_mr:
+  extends: .tf_destroy
+  variables:
+    <<: *dev_variables
+  stage: deploy_mr
+  only:
+    - merge_requests
+  when: manual
+
+tag_version:
+  extends: .tag_version
+  stage: tag_version
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" && $GITLAB_USER_LOGIN == $GIT_USER_USERNAME
+
+.promote_dev:
+  extends: .promote_tf
+  stage: promote_dev
+  variables:
+    <<: *dev_variables
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" && $GITLAB_USER_LOGIN == $GIT_USER_USERNAME
