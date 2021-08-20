@@ -48,7 +48,6 @@ tflint:
     - shared
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
-      when: manual
 
 tf_plan:
   extends: .tf_plan
@@ -61,7 +60,6 @@ tf_plan:
     - shared
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
-      when: manual
 
 tf_deploy:
   extends: .tf_deploy
