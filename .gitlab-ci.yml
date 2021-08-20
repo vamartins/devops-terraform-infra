@@ -24,6 +24,7 @@ include:
 stages:
   - test
   - deploy_mr
+  - destroy_mr
 
 # tfsec:
 #   extends: .tfsec
@@ -44,8 +45,8 @@ tflint:
     - linux
     - docker
     - shared
-  only:
-    - merge_requests
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" && $GITLAB_USER_LOGIN == $GIT_USER_USERNAME
 
 tf_plan:
   extends: .tf_plan
@@ -56,25 +57,25 @@ tf_plan:
     - linux
     - docker
     - shared
-  only:
-    - merge_requests
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" && $GITLAB_USER_LOGIN == $GIT_USER_USERNAME
 
 deploy_mr:
   extends: .tf_deploy
   variables:
     <<: *dev_variables
   stage: deploy_mr
-  only:
-    - merge_requests
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" && $GITLAB_USER_LOGIN == $GIT_USER_USERNAME
   when: manual
 
 destroy_mr:
   extends: .tf_destroy
   variables:
     <<: *dev_variables
-  stage: deploy_mr
-  only:
-    - merge_requests
+  stage: destroy_mr
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" && $GITLAB_USER_LOGIN == $GIT_USER_USERNAME
   when: manual
 
 # tag_version:
