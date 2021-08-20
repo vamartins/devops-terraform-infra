@@ -3,7 +3,7 @@ before_script:
 
 include:
   - local: /templates/infra-pipelines/terraform-gitlab-pipeline.yml
-  - local: /templates/infra-pipelines/terraform-sec.yml
+  - local: /templates/security/terraform-tools.yml
 
 .variables: &variables
   TF_ROOT: $CI_PROJECT_DIR/infra/

@@ -1,0 +1,52 @@
+.tfsec:
+  image:
+    name: aquasec/tfsec:latest
+    entrypoint: [""]
+  before_script:
+    - ""
+  script:
+    - tfsec infra --format junit --out tfsec
+  artifacts:
+    name: Terraform tfsec analysis
+    expire_in: 1 week
+    when: always
+    paths:
+      - tfsec
+    reports:
+      junit: tfsec
+
+.checkov:
+  image:
+    name: bridgecrew/checkov:latest
+    entrypoint: [""]
+  before_script:
+    - ""
+  script:
+    - checkov -o junitxml -d . | tee checkov
+  artifacts:
+    name: Terraform checkov analysis
+    expire_in: 1 week
+    when: always
+    paths:
+      - checkov
+    reports:
+      junit: checkov
+
+.tflint:
+  image:
+    name: ghcr.io/terraform-linters/tflint-bundle:latest
+    entrypoint: [""]
+  before_script:
+    - ""
+  script:
+    - cd infra
+    - tflint --init
+    - tflint -f junit | tee tflint
+  artifacts:
+    name: Terraform tflint analysis
+    expire_in: 1 week
+    when: always
+    paths:
+      - infra/tflint
+    reports:
+      junit: infra/tflint
