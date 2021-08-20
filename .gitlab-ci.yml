@@ -3,7 +3,7 @@ include:
     ref: main
     file:
       - templates/common-variables.yml
-      - templates/infra-pipelines/terraform-gitlab-pipeline.yml
+      - templates/infra-pipelines/terraform-pipeline.yml
       - templates/security/terraform-tools.yml
 
 .variables: &variables
@@ -13,7 +13,7 @@ include:
   TF_VAR_application_name: $CI_PROJECT_NAME
   TF_VAR_logs_path: /logs
   TF_VAR_aws_region: $AWS_REGION
-  TF_VAR_aws_deployment_role: deployment_role_todo
+  TF_VAR_aws_deployment_role: $AWS_DEPLOYMENT_ROLE
 
 .dev_variables: &dev_variables
   ENVIRONMENT: dev
@@ -27,8 +27,6 @@ include:
 stages:
   - test
   - deploy_mr
-  - tag_version
-  - promote_dev
 
 # tfsec:
 #   extends: .tfsec
@@ -82,16 +80,16 @@ destroy_mr:
     - merge_requests
   when: manual
 
-tag_version:
-  extends: .tag_version
-  stage: tag_version
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main" && $GITLAB_USER_LOGIN == $GIT_USER_USERNAME
+# tag_version:
+#   extends: .tag_version
+#   stage: tag_version
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == "main" && $GITLAB_USER_LOGIN == $GIT_USER_USERNAME
 
-.promote_dev:
-  extends: .promote_tf
-  stage: promote_dev
-  variables:
-    <<: *dev_variables
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main" && $GITLAB_USER_LOGIN == $GIT_USER_USERNAME
+# .promote_dev:
+#   extends: .promote_tf
+#   stage: promote_dev
+#   variables:
+#     <<: *dev_variables
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == "main" && $GITLAB_USER_LOGIN == $GIT_USER_USERNAME
