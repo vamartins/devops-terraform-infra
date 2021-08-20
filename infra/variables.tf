@@ -7,92 +7,48 @@ locals {
   }
 }
 
-variable "AWS_REGION" {
-  type        = string
-  description = "Region where resources are going to be deployed"
-}
-
-variable "az" {
-  type        = string
-  description = "AZ for subnets inside VPC"
-}
-
-variable "vpc_cidr_block" {
-  type        = string
-  description = "CIDR for VPC"
-}
-
-variable "subnet_public_cidr" {
-  type        = string
-  description = "CIDR for public subnet"
-}
-
 variable "public_dest_cidr_block" {
   type        = string
   description = "CIDR for public destination"
+  default = "0.0.0.0/0"
 }
 
 variable "http_port" {
   type        = string
   description = "HTTP port"
+  default = "80"
 }
 
 variable "https_port" {
   type        = string
   description = "HTTPS port"
+  default = "443"
 }
 
 variable "ssh_port" {
   type        = string
   description = "SSH port"
+  default = "22"
 }
 
 variable "icmp_port" {
   type        = string
   description = "ICMP port"
+  default = "-1"
 }
 
 variable "initial_port" {
   type        = string
   description = "Initial port"
+  default = "0"
 }
 
 variable "final_port" {
   type        = string
   description = "Final port"
+  default = "65535"
 }
-
-variable "tcp_protocol" {
-  type        = string
-  description = "TCP Protocol"
-}
-
-variable "icmp_protocol" {
-  type        = string
-  description = "ICMP Protocol"
-}
-
-variable "all_protocols" {
-  type        = string
-  description = "All Protocols"
-}
-
 variable "iam_ro_policy" {
   type        = string
   description = "IAM Read-Only Policy for TUI User"
-}
-
-variable "kp_aws_user" {
-  type        = string
-  description = "Key-Pair for awslab User"
-}
-
-variable "instance_type" {
-  type        = string
-  description = "Instance type for EC2"
-}
-
-variable "awslab_user" {
-  type        = string
-  description = "User owner for .PEM file"
 }
