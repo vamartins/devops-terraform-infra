@@ -3,7 +3,7 @@
     name: aquasec/tfsec:$TFSEC_VERSION
     entrypoint: [""]
   variables:
-    TFSEC_VERSION: v0.58
+    TFSEC_VERSION: v0.56
     TFSEC_SRC: infra
     TFSEC_EXCLUDE_CHECK: ""
     TFSEC_FORMAT: default
