@@ -1,9 +1,9 @@
-include:
-  - project: templates/infra-pipelines
-    file:
-      - terraform-gitlab-pipeline.yml
-      - terraform-sec.yml
+before_script:
+  - echo "VAGNER DEVOPS - Testing Pipeline"
 
+include:
+  - local: /templates/infra-pipelines/terraform-gitlab-pipeline.yml
+  - local: /templates/infra-pipelines/terraform-sec.yml
 
 .variables: &variables
   TF_ROOT: $CI_PROJECT_DIR/infra/

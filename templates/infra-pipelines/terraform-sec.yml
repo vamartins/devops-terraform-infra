@@ -1,0 +1,23 @@
+include:
+  - local: templates/security/tfsec-scan/tfsec-scan.yml
+
+checkov:
+  image:
+    name: bridgecrew/checkov:$CHECKOV_VERSION
+    entrypoint: [""]
+  stage: test
+  variables:
+    CHECKOV_VERSION: latest
+  before_script:
+    - ""
+  script:
+    - checkov -o junitxml -d . | tee checkov
+  allow_failure: true
+  artifacts:
+    name: Terraform checkov analysis
+    expire_in: 1 week
+    when: always
+    paths:
+      - checkov
+    reports:
+      junit: checkov
