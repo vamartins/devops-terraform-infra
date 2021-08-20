@@ -1,4 +1,5 @@
 module "main" {
+    source = "."
     aws_account_id = var.AWS_ACCOUNT_ID
     aws_deployment_role = var.AWS_DEPLOYMENT_ROLE
     aws_region = var.AWS_REGION
