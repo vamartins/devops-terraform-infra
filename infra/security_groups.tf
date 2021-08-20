@@ -7,7 +7,7 @@ resource "aws_security_group" "awslab-sg-public" {
   ingress {
     from_port   = var.ssh_port
     to_port     = var.ssh_port
-    protocol    = TCP
+    protocol    = "tcp"
     cidr_blocks = [var.public_dest_cidr_block]
   }
 
@@ -15,7 +15,7 @@ resource "aws_security_group" "awslab-sg-public" {
   ingress {
     from_port   = var.http_port
     to_port     = var.http_port
-    protocol    = TCP
+    protocol    = "tcp"
     cidr_blocks = [var.public_dest_cidr_block]
   }
 
@@ -23,7 +23,7 @@ resource "aws_security_group" "awslab-sg-public" {
   ingress {
     from_port   = var.https_port
     to_port     = var.https_port
-    protocol    = TCP
+    protocol    = "tcp"
     cidr_blocks = [var.public_dest_cidr_block]
   }
 
@@ -31,7 +31,7 @@ resource "aws_security_group" "awslab-sg-public" {
   ingress {
     from_port   = var.icmp_port
     to_port     = var.icmp_port
-    protocol    = ICMP
+    protocol    = "icmp"
     cidr_blocks = [var.public_dest_cidr_block]
   }
 
@@ -39,7 +39,7 @@ resource "aws_security_group" "awslab-sg-public" {
   ingress {
     from_port   = 32768
     to_port     = 61000
-    protocol    = TCP
+    protocol    = "tcp"
     cidr_blocks = [var.public_dest_cidr_block]
   }
 

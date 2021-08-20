@@ -64,3 +64,15 @@ variable "kp_awslab_file_name" {
 variable "vpc_cidr_block" {
   type = string
 }
+
+variable "subnet_public_cidr" {
+  type = string
+}
+
+variable "az" {
+  type = string
+}
+
+variable "instance_type" {
+  type = string
+}
