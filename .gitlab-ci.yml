@@ -1,10 +1,10 @@
 include:
-  - project: vagner.samm/common-pipeline/templates
+  - project: vagner.samm/common-pipeline
     ref: main
     file:
-      - common-variables.yml
-      - infra-pipelines/terraform-gitlab-pipeline.yml
-      - security/terraform-tools.yml
+      - templates/common-variables.yml
+      - templates/infra-pipelines/terraform-gitlab-pipeline.yml
+      - templates/security/terraform-tools.yml
 
 .variables: &variables
   TF_ROOT: $CI_PROJECT_DIR/infra/
