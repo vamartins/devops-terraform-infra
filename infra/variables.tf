@@ -60,3 +60,7 @@ variable "kp_aws_user" {
 variable "kp_awslab_file_name" {
   type = string
 }
+
+variable "vpc_cidr_block" {
+  type = string
+}
