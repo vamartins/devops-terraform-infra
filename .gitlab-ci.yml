@@ -1,9 +1,10 @@
-before_script:
-  - echo "VAGNER DEVOPS - Testing Pipeline"
-
 include:
-  - local: /templates/infra-pipelines/terraform-gitlab-pipeline.yml
-  - local: /templates/security/terraform-tools.yml
+  - project: vagner.samm/common-pipeline/templates
+    ref: main
+    file:
+      - common-variables.yml
+      - infra-pipelines/terraform-gitlab-pipeline.yml
+      - security/terraform-tools.yml
 
 .variables: &variables
   TF_ROOT: $CI_PROJECT_DIR/infra/
