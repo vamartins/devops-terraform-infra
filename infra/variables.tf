@@ -10,43 +10,43 @@ locals {
 variable "public_dest_cidr_block" {
   type        = string
   description = "CIDR for public destination"
-  default = "0.0.0.0/0"
+  default     = "0.0.0.0/0"
 }
 
 variable "http_port" {
   type        = string
   description = "HTTP port"
-  default = "80"
+  default     = "80"
 }
 
 variable "https_port" {
   type        = string
   description = "HTTPS port"
-  default = "443"
+  default     = "443"
 }
 
 variable "ssh_port" {
   type        = string
   description = "SSH port"
-  default = "22"
+  default     = "22"
 }
 
 variable "icmp_port" {
   type        = string
   description = "ICMP port"
-  default = "-1"
+  default     = "-1"
 }
 
 variable "initial_port" {
   type        = string
   description = "Initial port"
-  default = "0"
+  default     = "0"
 }
 
 variable "final_port" {
   type        = string
   description = "Final port"
-  default = "65535"
+  default     = "65535"
 }
 variable "iam_ro_policy" {
   type        = string
