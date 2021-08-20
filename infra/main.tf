@@ -1,6 +1,6 @@
 module "main" {
   source                 = "./resources"
-  region                 = var.aws_region
+  region                 = var.AWS_REGION
   az                     = var.az
   vpc_cidr_block         = var.vpc_cidr_block
   subnet_public_cidr     = var.subnet_public_cidr

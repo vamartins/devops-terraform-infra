@@ -7,7 +7,7 @@ locals {
   }
 }
 
-variable "aws_region" {
+variable "AWS_REGION" {
   type        = string
   description = "Region where resources are going to be deployed"
 }

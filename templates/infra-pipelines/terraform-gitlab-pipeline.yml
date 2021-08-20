@@ -1,0 +1,61 @@
+.tf_base:
+  image: registry.gitlab.com/deichindianer/terraform-images/releases/terraform:1.0.4 
+  variables:
+    TF_ADDRESS: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/${CI_PROJECT_NAME}-${ENVIRONMENT}"
+    TF_ROOT: "${CI_PROJECT_DIR}/infra/${ENVIRONMENT}"
+  before_script:
+    - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@source.tui".insteadOf https://source.tui
+    - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@source.tui".insteadOf ssh://git@ssh.source.tui
+    - cd ${TF_ROOT}
+
+.tf_init:
+  extends: .tf_base
+  script:
+    - gitlab-terraform init
+  cache:
+    paths:
+      - ${TF_ROOT}/.terraform
+
+.tf_validate:
+  extends: .tf_base
+  script:
+    - gitlab-terraform init
+    - gitlab-terraform validate
+  cache:
+    paths:
+      - ${TF_ROOT}/.terraform
+
+.tf_plan:
+  extends: .tf_base
+  script:
+    - gitlab-terraform plan
+    - gitlab-terraform plan-json
+  cache:
+    paths:
+      - ${TF_ROOT}/.terraform
+  artifacts:
+    name: plan
+    paths:
+      - ${TF_ROOT}/plan.cache
+    reports:
+      terraform: ${TF_ROOT}/plan.json
+
+.tf_deploy:
+  extends: .tf_base
+  script:
+    - gitlab-terraform apply
+  cache:
+    paths:
+      - ${TF_ROOT}/.terraform
+  environment:
+    name: ${ENVIRONMENT}
+
+.tf_destroy:
+  extends: .tf_base
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - gitlab-terraform destroy
+  environment:
+    name: ${ENVIRONMENT}
+    action: stop
