@@ -45,6 +45,10 @@ stages:
 tflint:
   extends: .tflint
   stage: test
+  tags:
+    - linux
+    - docker
+    - shared
   only:
     - merge_requests
 
@@ -53,6 +57,10 @@ tf_plan:
   variables:
     <<: *dev_variables
   stage: test
+  tags:
+    - linux
+    - docker
+    - shared
   only:
     - merge_requests
 
