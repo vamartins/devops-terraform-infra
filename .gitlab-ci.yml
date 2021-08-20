@@ -20,7 +20,6 @@ include:
   TF_VAR_environment: $ENVIRONMENT
   TF_VAR_aws_account_number: $AWS_ACCOUNT_ID
 
-
 stages:
   - test
   - tf_plan
