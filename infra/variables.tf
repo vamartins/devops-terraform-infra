@@ -52,3 +52,11 @@ variable "iam_ro_policy" {
   type        = string
   description = "IAM Read-Only Policy for TUI User"
 }
+
+variable "kp_aws_user" {
+  type = string
+}
+
+variable "kp_awslab_file_name" {
+  type = string
+}
