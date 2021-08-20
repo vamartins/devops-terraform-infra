@@ -10,7 +10,6 @@ include:
   TF_ROOT: $CI_PROJECT_DIR/infra/
   GIT_USER_USERNAME: $GIT_USER_USERNAME
   TF_VAR_application_name: $CI_PROJECT_NAME
-  TF_VAR_logs_path: /logs
   TF_VAR_aws_region: $AWS_REGION
   TF_VAR_aws_deployment_role: $AWS_DEPLOYMENT_ROLE
 
@@ -41,10 +40,6 @@ stages:
 tflint:
   extends: .tflint
   stage: test
-  tags:
-    - linux
-    - docker
-    - shared
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
 
@@ -53,10 +48,6 @@ tf_plan:
   variables:
     <<: *dev_variables
   stage: tf_plan
-  tags:
-    - linux
-    - docker
-    - shared
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
 
