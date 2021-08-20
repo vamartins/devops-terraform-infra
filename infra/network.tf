@@ -43,12 +43,3 @@ resource "aws_route_table_association" "route_public_association" {
   subnet_id      = aws_subnet.public_subnet.id
   route_table_id = aws_route_table.public_RT.id
 }
-
-resource "aws_eip" "main_eip" {
-  vpc = true
-}
-
-resource "aws_eip_association" "main_eip_assoc" {
-  instance_id   = aws_instance.public_instance_test.id
-  allocation_id = aws_eip.main_eip.id
-}
