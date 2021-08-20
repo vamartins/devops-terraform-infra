@@ -29,21 +29,18 @@ stages:
   - deploy_mr
   - tag_version
   - promote_dev
-  - promote_test
-  - promote_preprod
-  - promote_prod
 
-tfsec:
-  extends: .tfsec
-  stage: test
-  only:
-    - merge_requests
+# tfsec:
+#   extends: .tfsec
+#   stage: test
+#   only:
+#     - merge_requests
 
-checkov:
-  extends: .checkov
-  stage: test
-  only:
-    - merge_requests
+# checkov:
+#   extends: .checkov
+#   stage: test
+#   only:
+#     - merge_requests
 
 tflint:
   extends: .tflint
