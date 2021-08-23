@@ -65,18 +65,10 @@ variable "subnet_public_cidr" {
   type = string
 }
 
+variable "az" {
+  type = string
+}
+
 variable "instance_type" {
-  type = string
-}
-
-variable "aws_account_id" {
-  type = string  
-}
-
-variable "aws_region" {
-  type = string
-}
-
-variable "aws_az" {
   type = string
 }
