@@ -2,7 +2,7 @@ module "s3-bucket" {
   source  = "terraform-aws-modules/s3-bucket/aws"
   version = "2.7.0"
 
-  bucket                                = "awslab-vagner-devops"
+  bucket                                = local.awslab_s3.bucket_name
   acl                                   = "private"
   attach_deny_insecure_transport_policy = true
   block_public_acls                     = true

@@ -1,10 +1,23 @@
 locals {
+
+   prefix = "${var.project_code}-${var.application_name}"
   # Common tags to be assigned to all resources
   common_tags = {
     service_name = "Curso Terraform"
     owner        = "Vagner Almeida Martins"
     provisioner  = "Terraform"
   }
+  awslab_s3 = {
+    bucket_name = "${local.prefix}-${var.environment}-vagner-devops"
+  }
+}
+
+variable "project_code" {
+  type = string
+}
+
+variable "application_name" {
+  type = string
 }
 
 variable "public_dest_cidr_block" {
@@ -71,4 +84,8 @@ variable "az" {
 
 variable "instance_type" {
   type = string
+}
+
+variable "environment" {
+  type = string  
 }
