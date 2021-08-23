@@ -18,7 +18,7 @@ include:
   AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID_DEV
   AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY_DEV
   TF_VAR_environment: $ENVIRONMENT
-  TF_VAR_aws_account_number: $AWS_ACCOUNT_ID
+  TF_VAR_aws_account_number: $AWS_ACCOUNT_ID_DEV
 
 stages:
   - test
