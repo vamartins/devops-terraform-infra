@@ -17,6 +17,6 @@ resource "aws_instance" "public_instance_test" {
   associate_public_ip_address = true
 
   tags = {
-    Name = "${local.prefix}-${var.environment}-devops"
+    Name = "${local.prefix}-${var.environment}"
   }
 }

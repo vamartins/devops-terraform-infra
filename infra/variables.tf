@@ -8,7 +8,7 @@ locals {
     provisioner  = "Terraform"
   }
   awslab_s3 = {
-    bucket_name = "${local.prefix}-${var.environment}-vagner-devops"
+    bucket_name = "${local.prefix}-${var.environment}"
   }
 }
 

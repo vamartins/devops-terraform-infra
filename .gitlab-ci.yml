@@ -25,9 +25,11 @@ variables:
 
 stages:
   - test
-  - tf_plan
-  - tf_deploy
-  - tf_destroy
+  - tf_plan_dev
+  - tf_deploy_dev
+  - tf_destroy_dev
+  - promote_test
+  - tf_destroy_test
 
 # tfsec:
 #   extends: .tfsec
@@ -73,16 +75,19 @@ tf_destroy:
     - if: $CI_COMMIT_BRANCH == "main"
       when: manual
 
-# tag_version:
-#   extends: .tag_version
-#   stage: tag_version
-#   rules:
-#     - if: $CI_COMMIT_BRANCH == "main" && $GITLAB_USER_LOGIN == $GIT_USER_USERNAME
+.promote_test:
+  extends: .promote_tf
+  stage: promote_test
+  variables:
+    <<: *test_variables
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
 
-# .promote_dev:
-#   extends: .promote_tf
-#   stage: promote_dev
-#   variables:
-#     <<: *dev_variables
-#   rules:
-#     - if: $CI_COMMIT_BRANCH == "main" && $GITLAB_USER_LOGIN == $GIT_USER_USERNAME
+.tf_destroy:
+  extends: .tf_destroy
+  variables:
+    <<: *test_variables
+  stage: tf_destroy
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual
