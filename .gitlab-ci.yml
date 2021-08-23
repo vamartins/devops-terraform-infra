@@ -52,6 +52,8 @@ tf_plan_dev:
   variables:
     <<: *dev_variables
   stage: dev
+  environment:
+    name: develop
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
 
@@ -60,6 +62,8 @@ tf_deploy_dev:
   variables:
     <<: *dev_variables
   stage: dev
+  environment:
+    name: develop
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
       when: manual
@@ -69,6 +73,8 @@ promote_test:
   variables:
     <<: *test_variables
   stage: test
+  environment:
+    name: testing
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
       when: manual
@@ -78,6 +84,8 @@ tf_destroy_dev:
   variables:
     <<: *dev_variables
   stage: destroy
+  environment:
+    name: develop
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
       when: manual
@@ -88,6 +96,8 @@ tf_destroy_test:
   variables:
     <<: *test_variables
   stage: destroy
+  environment:
+    name: testing
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
       when: manual
