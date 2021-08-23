@@ -49,28 +49,28 @@ tflint:
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
 
-tf_plan:
+tf_plan_dev:
   extends: .tf_plan
   variables:
     <<: *dev_variables
-  stage: tf_plan
+  stage: tf_plan_dev
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
 
-tf_deploy:
+tf_deploy_dev:
   extends: .tf_deploy
   variables:
     <<: *dev_variables
-  stage: tf_deploy
+  stage: tf_deploy_dev
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
       when: manual
 
-tf_destroy:
+tf_destroy_dev:
   extends: .tf_destroy
   variables:
     <<: *dev_variables
-  stage: tf_destroy
+  stage: tf_destroy_dev
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
       when: manual
@@ -87,7 +87,7 @@ tf_destroy:
   extends: .tf_destroy
   variables:
     <<: *test_variables
-  stage: tf_destroy
+  stage: tf_destroy_test
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
       when: manual
