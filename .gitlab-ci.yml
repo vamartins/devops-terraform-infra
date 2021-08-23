@@ -9,13 +9,12 @@ include:
 .variables: &variables
   TF_ROOT: $CI_PROJECT_DIR/infra/
   TF_VAR_application_name: $CI_PROJECT_NAME
-  TF_VAR_aws_region: $AWS_REGION
-  # TF_VAR_aws_deployment_role: $AWS_DEPLOYMENT_ROLE
+  TF_VAR_aws_az: $AWS_AZ
 
 .dev_variables: &dev_variables
   TF_VAR_AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID_DEV
   TF_VAR_AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY_DEV
-  TF_VAR_AWS_ACCOUNT_ID: $AWS_ACCOUNT_ID_DEV
+  TF_VAR_aws_account_id: $AWS_ACCOUNT_ID_DEV
 
 
 stages:
