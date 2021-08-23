@@ -24,12 +24,10 @@ variables:
   TF_VAR_aws_account_number: $AWS_ACCOUNT_ID_TEST
 
 stages:
-  - test
-  - tf_plan_dev
-  - tf_deploy_dev
-  - promote_test
-  - tf_destroy_dev
-  - tf_destroy_test
+  - VALIDATION
+  - DEV
+  - TEST
+  - DESTROY
 
 # tfsec:
 #   extends: .tfsec
@@ -45,7 +43,7 @@ stages:
 
 tflint:
   extends: .tflint
-  stage: test
+  stage: VALIDATION
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
 
@@ -53,7 +51,7 @@ tf_plan_dev:
   extends: .tf_plan
   variables:
     <<: *dev_variables
-  stage: tf_plan_dev
+  stage: DEV
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
 
@@ -61,25 +59,25 @@ tf_deploy_dev:
   extends: .tf_deploy
   variables:
     <<: *dev_variables
-  stage: tf_deploy_dev
+  stage: DEV
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
       when: manual
 
-promote_test:
-  extends: .promote_tf
-  stage: promote_test
-  variables:
-    <<: *test_variables
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-      when: manual
+# promote_test:
+#   extends: .promote_tf
+#   variables:
+#     <<: *test_variables
+#   stage: TEST
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == "main"
+#       when: manual
 
 tf_destroy_dev:
   extends: .tf_destroy
   variables:
     <<: *dev_variables
-  stage: tf_destroy_dev
+  stage: DESTROY
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
       when: manual
@@ -89,7 +87,7 @@ tf_destroy_test:
   extends: .tf_destroy
   variables:
     <<: *test_variables
-  stage: tf_destroy_test
+  stage: DESTROY
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
       when: manual
