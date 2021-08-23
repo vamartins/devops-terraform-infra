@@ -65,10 +65,6 @@ variable "subnet_public_cidr" {
   type = string
 }
 
-variable "az" {
-  type = string
-}
-
 variable "instance_type" {
   type = string
 }
