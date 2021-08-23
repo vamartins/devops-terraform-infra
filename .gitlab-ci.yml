@@ -70,12 +70,6 @@ tf_destroy:
     - if: $CI_COMMIT_BRANCH == "main"
       when: manual
 
-# tag_version:
-#   extends: .tag_version
-#   stage: tag_version
-#   rules:
-#     - if: $CI_COMMIT_BRANCH == "main" && $GITLAB_USER_LOGIN == $GIT_USER_USERNAME
-
 # .promote_dev:
 #   extends: .promote_tf
 #   stage: promote_dev
