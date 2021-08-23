@@ -76,3 +76,7 @@ variable "aws_account_id" {
 variable "aws_region" {
   type = string
 }
+
+variable "aws_az" {
+  type = string
+}
