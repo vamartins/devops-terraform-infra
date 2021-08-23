@@ -76,7 +76,7 @@ tf_destroy_dev:
     - if: $CI_COMMIT_BRANCH == "main"
       when: manual
 
-.promote_test:
+promote_test:
   extends: .promote_tf
   stage: promote_test
   variables:
@@ -84,7 +84,7 @@ tf_destroy_dev:
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
 
-.tf_destroy_test:
+tf_destroy_test:
   extends: .tf_destroy
   variables:
     <<: *test_variables
