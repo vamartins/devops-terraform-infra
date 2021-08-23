@@ -12,6 +12,10 @@ locals {
   }
 }
 
+variable "environment" {
+  type = string  
+}
+
 variable "project_code" {
   type = string
 }
@@ -84,8 +88,4 @@ variable "az" {
 
 variable "instance_type" {
   type = string
-}
-
-variable "environment" {
-  type = string  
 }
