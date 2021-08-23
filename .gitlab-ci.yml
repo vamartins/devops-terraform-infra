@@ -27,8 +27,8 @@ stages:
   - test
   - tf_plan_dev
   - tf_deploy_dev
-  - tf_destroy_dev
   - promote_test
+  - tf_destroy_dev
   - tf_destroy_test
 
 # tfsec:
@@ -65,7 +65,15 @@ tf_deploy_dev:
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
       when: manual
-    - when: never
+
+promote_test:
+  extends: .promote_tf
+  stage: promote_test
+  variables:
+    <<: *test_variables
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual
 
 tf_destroy_dev:
   extends: .tf_destroy
@@ -76,14 +84,6 @@ tf_destroy_dev:
     - if: $CI_COMMIT_BRANCH == "main"
       when: manual
     - when: never
-
-promote_test:
-  extends: .promote_tf
-  stage: promote_test
-  variables:
-    <<: *test_variables
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
 
 tf_destroy_test:
   extends: .tf_destroy
