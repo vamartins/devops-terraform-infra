@@ -9,7 +9,7 @@ resource "aws_vpc" "main" {
 resource "aws_subnet" "public_subnet" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = var.subnet_public_cidr
-  availability_zone = var.az
+  availability_zone = var.aws_az
 
   tags = {
     Name = "awslab-subnet-public"
