@@ -75,6 +75,7 @@ tf_destroy_dev:
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
       when: manual
+    - when: never
 
 promote_test:
   extends: .promote_tf
