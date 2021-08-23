@@ -83,7 +83,7 @@ tf_destroy:
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
 
-.tf_destroy:
+.tf_destroy_test:
   extends: .tf_destroy
   variables:
     <<: *test_variables
