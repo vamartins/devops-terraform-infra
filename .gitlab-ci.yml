@@ -6,7 +6,7 @@ include:
       - templates/infra-pipelines/terraform-pipeline.yml
       - templates/security/terraform-tools.yml
 
-variables:
+.variables: &variables
   TF_ROOT: $CI_PROJECT_DIR/infra/
   TF_VAR_application_name: $CI_PROJECT_NAME
   TF_VAR_aws_region: $AWS_REGION
