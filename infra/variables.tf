@@ -65,6 +65,10 @@ variable "subnet_public_cidr" {
   type = string
 }
 
+variable "aws_region" {
+  type = string
+}
+
 variable "az" {
   type = string
 }
