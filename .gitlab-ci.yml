@@ -29,11 +29,11 @@ stages:
   - test
   - destroy
 
-tfsec:
-  extends: .tfsec
-  stage: validate
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
+# tfsec:
+#   extends: .tfsec
+#   stage: validate
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == "main"
 
 # checkov:
 #   extends: .checkov
