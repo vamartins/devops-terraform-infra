@@ -102,3 +102,4 @@ tf_destroy_test:
     - if: $CI_COMMIT_BRANCH == "main"
       when: manual
     - when: never
+    
