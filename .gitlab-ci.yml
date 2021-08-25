@@ -24,14 +24,14 @@ variables:
   TF_VAR_aws_account_number: $AWS_ACCOUNT_ID_TEST
 
 stages:
-  - validation
+  - validate
   - dev
   - test
   - destroy
 
 tfsec:
   extends: .tfsec
-  stage: validation
+  stage: validate
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
 
@@ -43,36 +43,41 @@ tfsec:
 
 tflint:
   extends: .tflint
-  stage: validation
+  stage: validate
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
 
 tf_plan_dev:
   extends: .tf_plan
+  stage: dev
   variables:
     <<: *dev_variables
-  stage: dev
   environment:
     name: develop
+  artifacts:
+    paths:
+      - planfile
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
 
 tf_deploy_dev:
   extends: .tf_deploy
+  stage: dev
   variables:
     <<: *dev_variables
-  stage: dev
   environment:
     name: develop
+  dependencies:
+    - tf_plan_dev
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
       when: manual
 
 promote_test:
   extends: .promote_tf
+  stage: test
   variables:
     <<: *test_variables
-  stage: test
   environment:
     name: testing
   rules:
@@ -81,9 +86,9 @@ promote_test:
 
 tf_destroy_dev:
   extends: .tf_destroy
+  stage: destroy
   variables:
     <<: *dev_variables
-  stage: destroy
   environment:
     name: develop
   rules:
@@ -93,13 +98,12 @@ tf_destroy_dev:
 
 tf_destroy_test:
   extends: .tf_destroy
+  stage: destroy
   variables:
     <<: *test_variables
-  stage: destroy
   environment:
     name: testing
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
       when: manual
     - when: never
-    
