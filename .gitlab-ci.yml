@@ -29,18 +29,6 @@ stages:
   - test
   - destroy
 
-# tfsec:
-#   extends: .tfsec
-#   stage: validate
-#   rules:
-#     - if: $CI_COMMIT_BRANCH == "main"
-
-# checkov:
-#   extends: .checkov
-#   stage: test
-#   only:
-#     - merge_requests
-
 tflint:
   extends: .tflint
   stage: validate
@@ -54,9 +42,6 @@ tf_plan_dev:
     <<: *dev_variables
   environment:
     name: develop
-  artifacts:
-    paths:
-      - planfile
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
 
