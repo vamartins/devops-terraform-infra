@@ -7,7 +7,7 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"]
 }
 
-resource "aws_instance" "public_instance_test" {
+resource "aws_instance" "public_instance_awslab" {
   ami                         = data.aws_ami.ubuntu.id
   instance_type               = var.instance_type
   # key_name                  = aws_key_pair.generated_key.key_name
