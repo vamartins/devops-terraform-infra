@@ -77,7 +77,7 @@ tf_destroy_dev:
     name: develop
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
-    - when: manual
+      when: manual
     - when: never
 
 tf_destroy_test:
@@ -89,5 +89,5 @@ tf_destroy_test:
     name: testing
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
-    - when: manual
+      when: manual
     - when: never
