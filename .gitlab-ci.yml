@@ -9,19 +9,16 @@ include:
 variables:
   TF_ROOT: $CI_PROJECT_DIR/infra/
   TF_VAR_application_name: $CI_PROJECT_NAME
+  TF_VAR_environment: $CI_ENVIRONMENT_NAME
   TF_VAR_aws_region: $AWS_REGION
 
 .dev_variables: &dev_variables
   AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID_DEV
   AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY_DEV
-  TF_VAR_environment: dev
-  TF_VAR_aws_account_number: $AWS_ACCOUNT_ID_DEV
 
 .test_variables: &test_variables
   AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID_TEST
   AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY_TEST
-  TF_VAR_environment: test
-  TF_VAR_aws_account_number: $AWS_ACCOUNT_ID_TEST
 
 stages:
   - validate

@@ -66,14 +66,6 @@ variable "final_port" {
   default     = "65535"
 }
 
-variable "kp_aws_user" {
-  type = string
-}
-
-variable "kp_awslab_file_name" {
-  type = string
-}
-
 variable "vpc_cidr_block" {
   type = string
 }
@@ -88,4 +80,10 @@ variable "az" {
 
 variable "instance_type" {
   type = string
+}
+
+variable "key" {
+  type = string
+  description = "key pairs used in EC2 instances"
+  default = "challenge_tui"
 }
