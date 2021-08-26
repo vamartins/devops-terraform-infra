@@ -30,26 +30,26 @@ stages:
   - destroy
 
 tflint:
+  stage: validate
   extends: .tflint
-  stage: validation
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
 
 tf_plan_dev:
+  stage: dev
   extends: .tf_plan
   variables:
     <<: *dev_variables
-  stage: dev
   environment:
     name: develop
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
 
 tf_deploy_dev:
+  stage: dev
   extends: .tf_deploy
   variables:
     <<: *dev_variables
-  stage: dev
   environment:
     name: develop
   rules:
@@ -57,10 +57,10 @@ tf_deploy_dev:
       when: manual
 
 promote_test:
+  stage: test
   extends: .promote_tf
   variables:
     <<: *test_variables
-  stage: test
   environment:
     name: testing
   rules:
@@ -68,10 +68,10 @@ promote_test:
       when: manual
 
 tf_destroy_dev:
+  stage: destroy
   extends: .tf_destroy
   variables:
     <<: *dev_variables
-  stage: destroy
   environment:
     name: develop
   rules:
@@ -80,10 +80,10 @@ tf_destroy_dev:
     - when: never
 
 tf_destroy_test:
+  stage: destroy
   extends: .tf_destroy
   variables:
     <<: *test_variables
-  stage: destroy
   environment:
     name: testing
   rules:
