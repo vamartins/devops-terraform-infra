@@ -5,6 +5,10 @@ module "awslab-s3-bucket" {
   bucket                                = local.awslab_s3.bucket_name
   acl                                   = "private"
   attach_deny_insecure_transport_policy = true
+  block_public_acls                     = true
+  block_public_policy                   = true
+  ignore_public_acls                    = true
+  restrict_public_buckets               = true
   versioning = {
     enabled = false
   }
@@ -13,14 +17,7 @@ module "awslab-s3-bucket" {
       Name : local.awslab_s3.bucket_name
     }
   )
-}
 
-resource "aws_s3_bucket_public_access_block" "awslab-bucket-public-access-block" {
-  bucket                  = module.awslab-s3-bucket.bucket_name
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
 }
 
 # resource "aws_lambda_permission" "allow_bucket" {
