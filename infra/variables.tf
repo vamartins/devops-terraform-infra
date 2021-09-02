@@ -9,11 +9,11 @@ locals {
   }
   
   awslab_s3_lambda_archive = {
-    bucket_name = "${local.prefix}-${var.environment}-lambda_archive"
+    bucket_name = "${local.prefix}-${var.environment}-lambda-archive"
   }
   
   awslab_s3_lambda_trigger = {
-    bucket_name = "${local.prefix}-${var.environment}-lambda_trigger"
+    bucket_name = "${local.prefix}-${var.environment}-lambda-trigger"
   }
 
   awslab_lambda = {
