@@ -1,4 +1,4 @@
-import {Context, DynamoDBStreamEvent} from 'awslab-lambda-function';
+import {Context, DynamoDBStreamEvent} from 'awslab-lambda';
 
 export const main = async (event: DynamoDBStreamEvent, context: Context) => {
      console.log('context');
