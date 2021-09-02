@@ -1,38 +1,15 @@
-######
-# Lambda module placeholder
-######
-##All the names provided are examples, adjust for each Lambda
-module "awslab-lambda-function" {
-  source  = "terraform-aws-modules/lambda/aws"
-  version = "2.16.0"
-  
-  source_configuration = {
-    type = "dir"
-    path = "../../src/${local.lambda_folder.aws_lambda_folder}"
+data "archive_file" "awslab_lambda_hello_world" {
+  type = "zip"
 
-  }
-
-  handler     = local.awslab_lambda.handler
-  name        = local.awslab_lambda.name
-  runtime     = local.awslab_lambda.runtime
-  memory_size = local.awslab_lambda.memory_size
-  timeout     = local.awslab_lambda.timeout
-  npm_install = true
-  npm_build   = true
-  lambda_src  = local.awslab_lambda
-
-  lambda_role_name = "${local.awslab_lambda.name}-role"
-  tracing_mode     = "Active"
-  tags = merge(local.common_tags,
-    {
-      Name : local.awslab_lambda.name
-    }
-  )
+  source_dir  = "${path.module}/hello-world"
+  output_path = "${path.module}/hello-world.zip"
 }
 
-data "template_file" "awslab-lambda-policy" {
-  template = file("../policies/awslab_lamdba_policy.tpl")
-  vars = {
-    s3_arn     = module.awslab-s3-bucket.bucket_arn
-  }
+resource "aws_s3_bucket_object" "awslab_s3_lambda" {
+  bucket = module.awslab-s3-bucket.id
+
+  key    = "hello-world.zip"
+  source = data.archive_file.awslab_lambda_hello_world.output_path
+
+  etag = filemd5(data.archive_file.awslab_lambda_hello_world.output_path)
 }
