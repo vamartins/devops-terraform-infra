@@ -6,7 +6,10 @@ module "awslab-lambda-function" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "2.16.0"
   
-  source_path = "../../src/local.awslab_lambda"
+  source_configuration = {
+    type = "dir"
+    path = "../../src/${local.awslab_lambda.build_folder}"
+  }
 
   handler     = local.awslab_lambda.handler
   name        = local.awslab_lambda.name
