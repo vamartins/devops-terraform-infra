@@ -8,8 +8,12 @@ locals {
     provisioner  = "Terraform"
   }
   
-  awslab_s3 = {
-    bucket_name = "${local.prefix}-${var.environment}"
+  awslab_s3_lambda_archive = {
+    bucket_name = "${local.prefix}-${var.environment}-lambda_archive"
+  }
+  
+  awslab_s3_lambda_trigger = {
+    bucket_name = "${local.prefix}-${var.environment}-lambda_trigger"
   }
 
   awslab_lambda = {

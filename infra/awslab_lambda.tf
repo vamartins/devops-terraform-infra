@@ -6,7 +6,7 @@ data "archive_file" "awslab_lambda_archive" {
 }
 
 resource "aws_s3_bucket_object" "awslab_s3_lambda" {
-  bucket = module.awslab-s3-bucket.s3_bucket_id
+  bucket = module.awslab-s3-lambda-archive.s3_bucket_id
   key    = "hello-world.zip"
   source = data.archive_file.awslab_lambda_archive.output_path
   etag = filemd5(data.archive_file.awslab_lambda_archive.output_path)
@@ -19,7 +19,7 @@ resource "aws_lambda_function" "awslab_lambda_hello_world" {
   handler = local.awslab_lambda.handler
   memory_size = local.awslab_lambda.memory_size
   timeout = local.awslab_lambda.timeout
-  s3_bucket = module.awslab-s3-bucket.s3_bucket_id
+  s3_bucket = module.awslab-s3-lambda-archive.s3_bucket_id
   s3_key    = aws_s3_bucket_object.awslab_s3_lambda.key
   source_code_hash = data.archive_file.awslab_lambda_archive.output_base64sha256
   role = aws_iam_role.lambda_exec.arn

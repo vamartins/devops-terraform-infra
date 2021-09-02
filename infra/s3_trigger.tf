@@ -1,8 +1,8 @@
-module "awslab-s3-bucket" {
+module "awslab-s3-lambda-trigger" {
   source  = "terraform-aws-modules/s3-bucket/aws"
   version = "2.9.0"
 
-  bucket                                = local.awslab_s3.bucket_name
+  bucket                                = local.awslab_s3_lambda_trigger.bucket_name
   acl                                   = "private"
   attach_deny_insecure_transport_policy = true
   block_public_acls                     = true
@@ -14,7 +14,7 @@ module "awslab-s3-bucket" {
   }
   tags = merge(local.common_tags,
     {
-      Name : local.awslab_s3.bucket_name
+      Name : local.awslab_s3_lambda_trigger.bucket_name
     }
   )
 }
