@@ -14,8 +14,8 @@ locals {
 
   awslab_lambda = {
     name        = "${local.prefix}-${var.environment}-lambda"
-    handler     = "index.main"
-    runtime     = "nodejs12.x"
+    handler     = "hello.handler"
+    runtime     = "nodejs14.x"
     memory_size = 128
     timeout     = 900
   }

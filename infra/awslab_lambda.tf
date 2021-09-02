@@ -21,10 +21,13 @@ resource "aws_lambda_function" "awslab_lambda_hello_world" {
   timeout = local.awslab_lambda.timeout
   s3_bucket = module.awslab-s3-bucket.s3_bucket_id
   s3_key    = aws_s3_bucket_object.awslab_s3_lambda.key
-
   source_code_hash = data.archive_file.awslab_lambda_archive.output_base64sha256
-
   role = aws_iam_role.lambda_exec.arn
+  tags = merge(local.common_tags,
+    {
+      Name : local.awslab_lambda.name
+    }
+  )
 }
 
 resource "aws_cloudwatch_log_group" "hello_world" {

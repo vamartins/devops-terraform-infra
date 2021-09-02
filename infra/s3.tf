@@ -17,7 +17,6 @@ module "awslab-s3-bucket" {
       Name : local.awslab_s3.bucket_name
     }
   )
-
 }
 
 # resource "aws_lambda_permission" "allow_bucket" {
