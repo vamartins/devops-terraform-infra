@@ -7,8 +7,17 @@ locals {
     owner        = "Vagner Almeida Martins"
     provisioner  = "Terraform"
   }
+  
   awslab_s3 = {
     bucket_name = "${local.prefix}-${var.environment}"
+  }
+
+  awslab_lambda = {
+    name        = "${local.prefix}-${var.environment}-lambda"
+    handler     = "index.main"
+    runtime     = "nodejs12.x"
+    memory_size = 128
+    timeout     = 900
   }
 }
 

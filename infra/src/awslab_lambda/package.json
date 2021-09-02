@@ -1,0 +1,16 @@
+{
+  "name": "dynamo_trigger_processor",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "author": "TUI",
+  "dependencies": {
+    "@types/aws-lambda": "^8.10.31",
+    "aws-sdk": "^2.804.0"
+  },
+  "devDependencies": {
+    "typescript": "^4.2.4",
+    "@types/node": "^15.12.2"
+  }
+}
