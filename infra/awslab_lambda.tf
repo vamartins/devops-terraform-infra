@@ -6,7 +6,7 @@ data "archive_file" "awslab_lambda_hello_world" {
 }
 
 resource "aws_s3_bucket_object" "awslab_s3_lambda" {
-  bucket = module.awslab-s3-bucket.id
+  bucket = module.awslab-s3-bucket.bucket
 
   key    = "hello-world.zip"
   source = data.archive_file.awslab_lambda_hello_world.output_path
