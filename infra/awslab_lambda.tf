@@ -8,7 +8,8 @@ module "awslab-lambda-function" {
   
   source_configuration = {
     type = "dir"
-    path = "../../src/${local.awslab_lambda.build_folder}"
+    path = "../../src/${local.lambda_folder.aws_lambda_folder}"
+
   }
 
   handler     = local.awslab_lambda.handler

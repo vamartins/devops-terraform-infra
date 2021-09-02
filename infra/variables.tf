@@ -12,6 +12,10 @@ locals {
     bucket_name = "${local.prefix}-${var.environment}"
   }
 
+  lambda_folder = {
+    aws_lambda_folder = "awslab_lambda"
+  }
+
   awslab_lambda = {
     name        = "${local.prefix}-${var.environment}-lambda"
     handler     = "index.main"
@@ -95,4 +99,22 @@ variable "key" {
   type = string
   description = "key pairs used in EC2 instances"
   default = "challenge_tui"
+}
+
+variable "npm_install" {
+  description = "if set true, then src should be exist in repo"
+  type = bool
+  default = true
+}
+
+variable "npm_build" {
+  description = "if set to true, npm packages installed will be built."
+  type = bool
+  default = true
+}
+
+variable "lambda_src" {
+  description = "name of the folder where the lambda code is stored. Used if multiple lambdas are stored in same repository."
+  type = string
+  default = null
 }
