@@ -2,9 +2,8 @@ module "awslab-s3-bucket" {
   source  = "terraform-aws-modules/s3-bucket/aws"
   version = "2.9.0"
 
-  bucket_name                           = local.awslab_s3.bucket_name
+  bucket                                = local.awslab_s3.bucket_name
   acl                                   = "private"
-  server_side_encryption                = true
   attach_deny_insecure_transport_policy = true
   versioning = {
     enabled = false
@@ -17,7 +16,7 @@ module "awslab-s3-bucket" {
 }
 
 resource "aws_s3_bucket_public_access_block" "awslab-bucket-public-access-block" {
-  bucket                  = module.awslab-s3-bucket.bucket_name
+  bucket                  = module.awslab-s3-bucket.bucket
   block_public_acls       = true
   block_public_policy     = true
   ignore_public_acls      = true
