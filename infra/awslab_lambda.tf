@@ -19,7 +19,7 @@ resource "aws_lambda_function" "awslab_lambda_hello_world" {
   handler = local.awslab_lambda.handler
   memory_size = local.awslab_lambda.memory_size
   timeout = local.awslab_lambda.timeout
-  s3_bucket = aws_s3_bucket.awslab_s3_lambda.id
+  s3_bucket = module.awslab-s3-bucket.s3_bucket_id
   s3_key    = aws_s3_bucket_object.awslab_s3_lambda.key
 
   source_code_hash = data.archive_file.awslab_lambda_archive.output_base64sha256
