@@ -12,10 +12,6 @@ locals {
     bucket_name = "${local.prefix}-${var.environment}"
   }
 
-  lambda_folder = {
-    aws_lambda_folder = "awslab_lambda"
-  }
-
   awslab_lambda = {
     name        = "${local.prefix}-${var.environment}-lambda"
     handler     = "index.main"
