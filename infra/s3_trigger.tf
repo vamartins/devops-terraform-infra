@@ -14,7 +14,7 @@ module "awslab-s3-lambda-trigger" {
   }
   tags = merge(local.common_tags,
     {
-      Name : local.awslab_s3_lambda_trigger.bucket_name
+      name : local.awslab_s3_lambda_trigger.bucket_name
     }
   )
 }
@@ -24,7 +24,7 @@ resource "aws_lambda_permission" "allow_bucket" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.awslab_lambda_hello_world.arn
   principal     = "s3.amazonaws.com"
-  source_arn    = module.awslab-s3-lambda-trigger.arn
+  source_arn    = module.awslab-s3-lambda-trigger.bucket_arn
 }
 
 resource "aws_s3_bucket_notification" "bucket_notification" {
