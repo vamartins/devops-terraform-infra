@@ -59,7 +59,7 @@ resource "aws_iam_role_policy" "lambda_policy" {
 }
 
 data "template_file" "awslab-lambda-policy" {
-  template = "${path.module}/policies/awslab_lamdba_policy.tpl"
+  template = file("${path.module}/policies/awslab_lamdba_policy.tpl")
   vars = {
     s3_arn = module.awslab-s3-lambda-trigger.s3_bucket_arn
   }
