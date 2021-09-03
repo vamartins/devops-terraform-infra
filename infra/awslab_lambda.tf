@@ -55,5 +55,12 @@ resource "aws_iam_role" "lambda_exec" {
 
 resource "aws_iam_role_policy" "lambda_policy" {
   role       = aws_iam_role.lambda_exec.name
-  policy     = file("../policies/awslab_lamdba_policy.tpl")
+  policy     = data.template_file.awslab-lambda-policy.rendered
+}
+
+data "template_file" "awslab-lambda-policy" {
+  template = file("../policies/awslab_lamdba_policy.tpl")
+  vars = {
+    s3_arn     = module.awslab-s3-lambda-trigger.s3_bucket_arn
+  }
 }
