@@ -1,17 +1,17 @@
 locals {
 
-   prefix = "${var.project_code}-${var.application_name}"
+  prefix = "${var.project_code}-${var.application_name}"
   # Common tags to be assigned to all resources
   common_tags = {
     service_name = "Curso Terraform"
     owner        = "Vagner Almeida Martins"
     provisioner  = "Terraform"
   }
-  
+
   awslab_s3_lambda_archive = {
     bucket_name = "${local.prefix}-${var.environment}-lambda-archive"
   }
-  
+
   awslab_s3_lambda_trigger = {
     bucket_name = "${local.prefix}-${var.environment}-lambda-trigger"
   }
@@ -26,7 +26,7 @@ locals {
 }
 
 variable "environment" {
-  type = string  
+  type = string
 }
 
 variable "project_code" {
@@ -96,7 +96,7 @@ variable "instance_type" {
 }
 
 variable "key" {
-  type = string
+  type        = string
   description = "key pairs used in EC2 instances"
-  default = "challenge_tui"
+  default     = "challenge_tui"
 }
