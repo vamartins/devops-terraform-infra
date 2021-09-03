@@ -1,56 +1,55 @@
-// import dependencies from node_modules
-const SDK = require("aws-sdk");
-const SHARP = require("sharp");
+'use strict';
 
-// instantiate S3 helper
-const S3 = new SDK.S3();
+const AWS = require('aws-sdk');
+const S3 = new AWS.S3({
+  signatureVersion: 'v4',
+});
+const Sharp = require('sharp');
 
-// pull in environment variables that we specified in lambda settings
 const BUCKET = process.env.BUCKET;
-const BUCKET_URL = process.env.BUCKET_URL;
+const URL = process.env.URL;
+const ALLOWED_DIMENSIONS = new Set();
 
-// export handler function that is needed for lambda execution
-exports.handler = function (event, context, callback) {
-  // parse request parameters to get width, height, and bucket key
-  const key = event.rawPath.slice(1);
-  const params = key.split("/");
-  const size = params[0];
-  const path = params[1];
+if (process.env.ALLOWED_DIMENSIONS) {
+  const dimensions = process.env.ALLOWED_DIMENSIONS.split(/\s*,\s*/);
+  dimensions.forEach((dimension) => ALLOWED_DIMENSIONS.add(dimension));
+}
 
-  const dimensions = size.split("x");
-  const width = parseInt(dimensions[0], 10);
-  const height = parseInt(dimensions[1], 10);
+exports.handler = function(event, context, callback) {
+  const key = event.queryStringParameters.key;
+  const match = key.match(/((\d+)x(\d+))\/(.*)/);
+  const dimensions = match[1];
+  const width = parseInt(match[2], 10);
+  const height = parseInt(match[3], 10);
+  const originalKey = match[4];
 
-  // fetch the original image from S3
-  S3.getObject({ Bucket: BUCKET, Key: path }, (err, data) =>
+  if(ALLOWED_DIMENSIONS.size > 0 && !ALLOWED_DIMENSIONS.has(dimensions)) {
+     callback(null, {
+      statusCode: '403',
+      headers: {},
+      body: '',
+    });
+    return;
+  }
 
-    // use Sharp (https://www.npmjs.com/package/sharp)
-    // a node.js image conversion library, to resize the image.
-    SHARP(data.Body)
+  S3.getObject({Bucket: BUCKET, Key: originalKey}).promise()
+    .then(data => Sharp(data.Body)
       .resize(width, height)
-      .toFormat("jpg")
+      .toFormat('png')
       .toBuffer()
-      .then((buffer) =>
-            
-        // create a new entry in S3 with our resized image
-        // the key is unique per size - i.e. 300x300/image.jpg
-        S3.putObject(
-          {
-            Body: buffer,
-            Bucket: BUCKET,
-            Key: key,
-            ContentType: "image/jpeg",
-            ContentDisposition: "inline", // ensure that the browser will display S3 images inline
-          },
-          () =>
-    
-            // generate lambda response with the location of the newly uploaded file
-            callback(null, {
-              statusCode: "301",
-              headers: { location: `${BUCKET_URL}/${key}` },
-              body: "",
-            })
-        )
-      )
-  );
-};
+    )
+    .then(buffer => S3.putObject({
+        Body: buffer,
+        Bucket: BUCKET,
+        ContentType: 'image/png',
+        Key: key,
+      }).promise()
+    )
+    .then(() => callback(null, {
+        statusCode: '301',
+        headers: {'location': `${URL}/${key}`},
+        body: '',
+      })
+    )
+    .catch(err => callback(err))
+}
