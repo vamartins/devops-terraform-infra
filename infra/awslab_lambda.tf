@@ -25,7 +25,7 @@ resource "aws_lambda_function" "awslab_lambda_hello_world" {
   role             = aws_iam_role.lambda_exec.arn
   tags = merge(local.common_tags,
     {
-      Name : local.awslab_lambda.name
+      name : local.awslab_lambda.name
     }
   )
 }
@@ -37,7 +37,6 @@ resource "aws_cloudwatch_log_group" "hello_world" {
 
 resource "aws_iam_role" "lambda_exec" {
   name = "serverless_lambda"
-
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
