@@ -64,3 +64,8 @@ data "template_file" "awslab-lambda-policy" {
     s3_arn = module.awslab-s3-lambda-trigger.s3_bucket_arn
   }
 }
+
+resource "aws_iam_role_policy_attachment" "awslab_lambda_policy" {
+  role       = aws_iam_role.lambda_exec.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
