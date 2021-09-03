@@ -5,7 +5,8 @@
       "Action": [
         "s3:Get*",
         "s3:Delete*",
-        "s3:List*"
+        "s3:List*",
+        "s3:Put*"
       ],
       "Effect": "Allow",
       "Resource": "${s3_arn}/*"
