@@ -7,11 +7,11 @@
   "license": "Apache-2.0",
   "main": "index.js",
   "dependencies": {
-    "sharp": "^0.23.3"
+    "sharp": "^0.29.0"
   },
   "devDependencies": {
-    "aws-sdk": "^2.36.0",
+    "aws-sdk": "^2.983.0",
     "serverless-local-environment": "^0.3.0",
-    "serverless-offline": "^5.12.0"
+    "serverless-offline": "^8.1.0"
   }
 }
