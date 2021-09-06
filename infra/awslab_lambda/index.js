@@ -1,89 +1,72 @@
-'use strict'
+"use strict"
 
+const AWS = require("aws-sdk")
+const S3 = new AWS.S3({
+    signatureVersion: "v4",
+    // region: 'eu-central-1'
+})
 
-const AWS = require('aws-sdk');
-const S3 = new AWS.S3({signatureVersion: 'v4'});
-const Sharp = require('sharp');
-const PathPattern = /(.*\/)?(.*)\/(.*)/;
+const Sharp = require("sharp")
 
-// parameters
-const {BUCKET, URL} = process.env;
-const WHITELIST = process.env.WHITELIST
-    ? Object.freeze(process.env.WHITELIST.split(' '))
-    : null;
+const BUCKET = process.env.BUCKET
+const URL = process.env.URL
+const ALLOWED_DIMENSIONS = new Set()
 
+if (process.env.ALLOWED_DIMENSIONS) {
+    const dimensions = process.env.ALLOWED_DIMENSIONS.split(/\s*,\s*/)
+    dimensions.forEach(dimension => ALLOWED_DIMENSIONS.add(dimension))
+}
 
-exports.handler = async (event) => {
-    const path = event.queryStringParameters.path;
-    const parts = PathPattern.exec(path);
-    const dir = parts[1] || '';
-    const resizeOption = parts[2];  // e.g. "150x150_max"
-    const sizeAndAction = resizeOption.split('_');
-    const filename = parts[3];
+exports.handler = function(event, context, callback) {
+    const key = event.queryStringParameters.key
 
-    const sizes = sizeAndAction[0].split("x");
-    const action = sizeAndAction.length > 1 ? sizeAndAction[1] : null;
+    const match = key.match(/((\d+)x(\d+))\/(.*?)\/(.*)/)
+    const dimensions = match[1]
+    const width = parseInt(match[2], 10)
+    const height = parseInt(match[3], 10)
+    const originalKey = match[5]
+    const mode = match[4]
 
-    // Whitelist validation.
-    if (WHITELIST && !WHITELIST.includes(resizeOption)) {
-        return {
-            statusCode: 400,
-            body: `WHITELIST is set but does not contain the size parameter "${resizeOption}"`,
-            headers: {"Content-Type": "text/plain"}
-        };
+    if (ALLOWED_DIMENSIONS.size > 0 && !ALLOWED_DIMENSIONS.has(dimensions)) {
+        callback(null, {
+            statusCode: "403",
+            headers: {},
+            body: ""
+        })
+        return
     }
 
-    // Action validation.
-    if (action && action !== 'max' && action !== 'min') {
-        return {
-            statusCode: 400,
-            body: `Unknown func parameter "${action}"\n` +
-                  'For query ".../150x150_func", "_func" must be either empty, "_min" or "_max"',
-            headers: {"Content-Type": "text/plain"}
-        };
-    }
+    S3.getObject({ Bucket: BUCKET, Key: originalKey })
+        .promise()
+        .then(data => {
+            if (mode === "resize") {
+                return Sharp(data.Body)
+                    .resize(width, height,{fit: Sharp.fit.inside})
+                    .toFormat("jpeg")
+                    .toBuffer()
+            } else {
+                return Sharp(data.Body)
+                    .resize(width, height)
+                    .toFormat("jpeg")
+                    .toBuffer()
+            }
+        })
+        .then(buffer =>
+            S3.putObject({
+                Body: buffer,
+                Bucket: BUCKET,
+                ContentType: "image/jpeg",
+                CacheControl: "max-age=1209600",
+                Key: key
+            }).promise()
 
-    try {
-        const data = await S3
-            .getObject({Bucket: BUCKET, Key: dir + filename})
-            .promise();
-
-        const width = sizes[0] === 'AUTO' ? null : parseInt(sizes[0]);
-        const height = sizes[1] === 'AUTO' ? null : parseInt(sizes[1]);
-        let fit;
-        switch (action) {
-            case 'max':
-                fit = 'inside';
-                break;
-            case 'min':
-                fit = 'outside';
-                break;
-            default:
-                fit = 'cover';
-                break;
-        }
-        const result = await Sharp(data.Body, {failOnError: false})
-            .resize(width, height, {withoutEnlargement: true, fit})
-            .rotate()
-            .toBuffer();
-
-        await S3.putObject({
-            Body: result,
-            Bucket: BUCKET,
-            ContentType: data.ContentType,
-            Key: path,
-            CacheControl: 'public, max-age=86400'
-        }).promise();
-
-        return {
-            statusCode: 301,
-            headers: {"Location" : `${URL}/${path}`}
-        };
-    } catch (e) {
-        return {
-            statusCode: e.statusCode || 400,
-            body: 'Exception: ' + e.message,
-            headers: {"Content-Type": "text/plain"}
-        };
-    }
+        )
+        .then(() =>
+            callback(null, {
+                statusCode: "301",
+                headers: { location: `${URL}/${key}` },
+                body: ""
+            })
+        )
+        .catch(err => callback(err))
 }

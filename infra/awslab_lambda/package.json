@@ -1,15 +1,17 @@
 {
-    "name": "image-resize",
-    "version": "1.0.0",
-    "description": "Serverless image resizing",
-    "readme": "Serverless image resizing",
-    "repository": "https://github.com/awslabs/serverless-image-resizing",
-    "license": "Apache-2.0",
-    "main": "index.js",
-    "dependencies": {
-      "sharp": "^0.29.0"
-    },
-    "devDependencies": {
-      "aws-sdk": "^2.36.0"
-    }
+  "name": "awslab_lambda",
+  "version": "1.0.0",
+  "description": "Serverless image resizing",
+  "readme": "Serverless image resizing",
+  "repository": "https://github.com/awslabs/serverless-image-resizing",
+  "license": "Apache-2.0",
+  "main": "index.js",
+  "dependencies": {
+    "sharp": "^0.23.3"
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.36.0",
+    "serverless-local-environment": "^0.3.0",
+    "serverless-offline": "^5.12.0"
   }
+}
