@@ -1,55 +1,66 @@
-'use strict';
+import AWS from "aws-sdk";
+import sharp from "sharp";
+import stream from "stream";
 
-const AWS = require('aws-sdk');
-const S3 = new AWS.S3({
-  signatureVersion: 'v4',
-});
-const Sharp = require('sharp');
+const width = 400;
+const prefix = `${width}w`;
 
-const BUCKET = process.env.BUCKET;
-const URL = process.env.URL;
-const ALLOWED_DIMENSIONS = new Set();
+const S3 = new AWS.S3();
 
-if (process.env.ALLOWED_DIMENSIONS) {
-  const dimensions = process.env.ALLOWED_DIMENSIONS.split(/\s*,\s*/);
-  dimensions.forEach((dimension) => ALLOWED_DIMENSIONS.add(dimension));
+// Read stream for downloading from S3
+function readStreamFromS3({ Bucket, Key }) {
+  return S3.getObject({ Bucket, Key }).createReadStream();
 }
 
-exports.handler = function(event, context, callback) {
-  const key = event.queryStringParameters.key;
-  const match = key.match(/((\d+)x(\d+))\/(.*)/);
-  const dimensions = match[1];
-  const width = parseInt(match[2], 10);
-  const height = parseInt(match[3], 10);
-  const originalKey = match[4];
+// Write stream for uploading to S3
+function writeStreamToS3({ Bucket, Key }) {
+  const pass = new stream.PassThrough();
 
-  if(ALLOWED_DIMENSIONS.size > 0 && !ALLOWED_DIMENSIONS.has(dimensions)) {
-     callback(null, {
-      statusCode: '403',
-      headers: {},
-      body: '',
-    });
-    return;
+  return {
+    writeStream: pass,
+    upload: S3.upload({
+      Key,
+      Bucket,
+      Body: pass,
+    }).promise(),
+  };
+}
+
+// Sharp resize stream
+function streamToSharp(width) {
+  return sharp().resize(width);
+}
+
+export async function main(event) {
+  const s3Record = event.Records[0].s3;
+
+  // Grab the filename and bucket name
+  const Key = s3Record.object.key;
+  const Bucket = s3Record.bucket.name;
+
+  // Check if the file has already been resized
+  if (Key.startsWith(prefix)) {
+    return false;
   }
 
-  S3.getObject({Bucket: BUCKET, Key: originalKey}).promise()
-    .then(data => Sharp(data.Body)
-      .resize(width, height)
-      .toFormat('png')
-      .toBuffer()
-    )
-    .then(buffer => S3.putObject({
-        Body: buffer,
-        Bucket: BUCKET,
-        ContentType: 'image/png',
-        Key: key,
-      }).promise()
-    )
-    .then(() => callback(null, {
-        statusCode: '301',
-        headers: {'location': `${URL}/${key}`},
-        body: '',
-      })
-    )
-    .catch(err => callback(err))
+  // Create the new filename with the dimensions
+  const newKey = `${prefix}-${Key}`;
+
+  // Stream to read the file from the bucket
+  const readStream = readStreamFromS3({ Key, Bucket });
+  // Stream to resize the image
+  const resizeStream = streamToSharp(width);
+  // Stream to upload to the bucket
+  const { writeStream, upload } = writeStreamToS3({
+    Bucket,
+    Key: newKey,
+  });
+
+  // Trigger the streams
+  readStream.pipe(resizeStream).pipe(writeStream);
+
+  // Wait for the file to upload
+  await upload;
+
+  return true;
 }
