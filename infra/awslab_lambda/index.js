@@ -1,66 +1,89 @@
-import AWS from "aws-sdk";
-import sharp from "sharp";
-import stream from "stream";
+'use strict'
 
-const width = 400;
-const prefix = `${width}w`;
 
-const S3 = new AWS.S3();
+const AWS = require('aws-sdk');
+const S3 = new AWS.S3({signatureVersion: 'v4'});
+const Sharp = require('sharp');
+const PathPattern = /(.*\/)?(.*)\/(.*)/;
 
-// Read stream for downloading from S3
-function readStreamFromS3({ Bucket, Key }) {
-  return S3.getObject({ Bucket, Key }).createReadStream();
-}
+// parameters
+const {BUCKET, URL} = process.env;
+const WHITELIST = process.env.WHITELIST
+    ? Object.freeze(process.env.WHITELIST.split(' '))
+    : null;
 
-// Write stream for uploading to S3
-function writeStreamToS3({ Bucket, Key }) {
-  const pass = new stream.PassThrough();
 
-  return {
-    writeStream: pass,
-    upload: S3.upload({
-      Key,
-      Bucket,
-      Body: pass,
-    }).promise(),
-  };
-}
+exports.handler = async (event) => {
+    const path = event.queryStringParameters.path;
+    const parts = PathPattern.exec(path);
+    const dir = parts[1] || '';
+    const resizeOption = parts[2];  // e.g. "150x150_max"
+    const sizeAndAction = resizeOption.split('_');
+    const filename = parts[3];
 
-// Sharp resize stream
-function streamToSharp(width) {
-  return sharp().resize(width);
-}
+    const sizes = sizeAndAction[0].split("x");
+    const action = sizeAndAction.length > 1 ? sizeAndAction[1] : null;
 
-export async function main(event) {
-  const s3Record = event.Records[0].s3;
+    // Whitelist validation.
+    if (WHITELIST && !WHITELIST.includes(resizeOption)) {
+        return {
+            statusCode: 400,
+            body: `WHITELIST is set but does not contain the size parameter "${resizeOption}"`,
+            headers: {"Content-Type": "text/plain"}
+        };
+    }
 
-  // Grab the filename and bucket name
-  const Key = s3Record.object.key;
-  const Bucket = s3Record.bucket.name;
+    // Action validation.
+    if (action && action !== 'max' && action !== 'min') {
+        return {
+            statusCode: 400,
+            body: `Unknown func parameter "${action}"\n` +
+                  'For query ".../150x150_func", "_func" must be either empty, "_min" or "_max"',
+            headers: {"Content-Type": "text/plain"}
+        };
+    }
 
-  // Check if the file has already been resized
-  if (Key.startsWith(prefix)) {
-    return false;
-  }
+    try {
+        const data = await S3
+            .getObject({Bucket: BUCKET, Key: dir + filename})
+            .promise();
 
-  // Create the new filename with the dimensions
-  const newKey = `${prefix}-${Key}`;
+        const width = sizes[0] === 'AUTO' ? null : parseInt(sizes[0]);
+        const height = sizes[1] === 'AUTO' ? null : parseInt(sizes[1]);
+        let fit;
+        switch (action) {
+            case 'max':
+                fit = 'inside';
+                break;
+            case 'min':
+                fit = 'outside';
+                break;
+            default:
+                fit = 'cover';
+                break;
+        }
+        const result = await Sharp(data.Body, {failOnError: false})
+            .resize(width, height, {withoutEnlargement: true, fit})
+            .rotate()
+            .toBuffer();
 
-  // Stream to read the file from the bucket
-  const readStream = readStreamFromS3({ Key, Bucket });
-  // Stream to resize the image
-  const resizeStream = streamToSharp(width);
-  // Stream to upload to the bucket
-  const { writeStream, upload } = writeStreamToS3({
-    Bucket,
-    Key: newKey,
-  });
+        await S3.putObject({
+            Body: result,
+            Bucket: BUCKET,
+            ContentType: data.ContentType,
+            Key: path,
+            CacheControl: 'public, max-age=86400'
+        }).promise();
 
-  // Trigger the streams
-  readStream.pipe(resizeStream).pipe(writeStream);
-
-  // Wait for the file to upload
-  await upload;
-
-  return true;
+        return {
+            statusCode: 301,
+            headers: {"Location" : `${URL}/${path}`}
+        };
+    } catch (e) {
+        return {
+            statusCode: e.statusCode || 400,
+            body: 'Exception: ' + e.message,
+            headers: {"Content-Type": "text/plain"}
+        };
+    }
 }
