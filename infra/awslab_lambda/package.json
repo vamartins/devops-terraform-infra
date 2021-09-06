@@ -2,16 +2,14 @@
   "name": "awslab_lambda",
   "version": "1.0.0",
   "description": "Serverless image resizing",
-  "readme": "Serverless image resizing",
-  "repository": "https://github.com/awslabs/serverless-image-resizing",
-  "license": "Apache-2.0",
   "main": "index.js",
+  "author": {
+    "name": "Vagner Martins",
+    "email": "vagner.devops@gmail.com"},
   "dependencies": {
     "sharp": "^0.29.0"
   },
   "devDependencies": {
-    "aws-sdk": "^2.983.0",
-    "serverless-local-environment": "^0.3.0",
-    "serverless-offline": "^8.1.0"
+    "aws-sdk": "^2.983.0"
   }
 }
