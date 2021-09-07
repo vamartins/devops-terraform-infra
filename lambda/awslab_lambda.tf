@@ -2,7 +2,7 @@ data "archive_file" "awslab_lambda_archive" {
   type = "zip"
 
   source_dir  = local.lambda_path
-  output_path = local.lambda_path/awslab-s3-resize.zip
+  output_path = local.lambda_path / awslab-s3-resize.zip
 }
 
 resource "aws_s3_bucket_object" "awslab_s3_lambda" {

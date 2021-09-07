@@ -25,7 +25,7 @@ locals {
   }
 
   lambda_path = "${path.module}/lambda"
-  layer_path = "${path.module}/layer"
+  layer_path  = "${path.module}/layer"
 }
 
 variable "environment" {
