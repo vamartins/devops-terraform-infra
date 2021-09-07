@@ -23,6 +23,9 @@ locals {
     memory_size = 128
     timeout     = 900
   }
+
+  lambda_path = "${path.module}/lambda"
+  layer_path = "${path.module}/layer"
 }
 
 variable "environment" {
