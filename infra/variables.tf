@@ -3,9 +3,9 @@ locals {
   prefix = "${var.project_code}-${var.application_name}"
   # Common tags to be assigned to all resources
   common_tags = {
-    service_name = "Curso Terraform"
+    service_name = "ci/cd pipeline"
+    provisioner  = "terraform"
     owner        = "Vagner Almeida Martins"
-    provisioner  = "Terraform"
   }
 
   awslab_s3_lambda_archive = {
