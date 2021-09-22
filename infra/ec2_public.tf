@@ -15,7 +15,10 @@ resource "aws_instance" "public_instance_awslab" {
   subnet_id                   = aws_subnet.public_subnet.id
   associate_public_ip_address = true
 
-  tags = {
-    Name = "${local.prefix}-${var.environment}"
-  }
+  tags = merge(
+    local.common_tags,
+    {
+      Name = "${local.prefix}-${var.environment}"
+    }
+  )
 }
