@@ -51,7 +51,10 @@ resource "aws_security_group" "awslab-sg-public" {
     cidr_blocks = [var.public_dest_cidr_block]
   }
 
-  tags = {
-    Name = "awslab-sg-public"
-  }
+tags = merge(
+    local.common_tags,
+    {
+      Name = "awslab-sg-public"
+    }
+  )
 }

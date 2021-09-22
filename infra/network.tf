@@ -11,25 +11,34 @@ resource "aws_subnet" "public_subnet" {
   cidr_block        = var.subnet_public_cidr
   availability_zone = var.az
 
-  tags = {
-    Name = "awslab-subnet-public"
-  }
+  tags = merge(
+    local.common_tags,
+    {
+      Name = "awslab-subnet-public"
+    }
+  )
 }
 
 resource "aws_internet_gateway" "aws_lab_IGW" {
   vpc_id = aws_vpc.main.id
 
-  tags = {
-    Name = "awslab-internet-gateway"
-  }
+tags = merge(
+    local.common_tags,
+    {
+      Name = "awslab-internet-gateway"
+    }
+  )
 }
 
 resource "aws_route_table" "public_RT" {
   vpc_id = aws_vpc.main.id
 
-  tags = {
-    Name = "awslab-route-table-public"
-  }
+tags = merge(
+    local.common_tags,
+    {
+      Name = "awslab-route-table-public"
+    }
+  )
 }
 
 resource "aws_route" "internet_access" {
